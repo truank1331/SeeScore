@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use Charts;
 
 class TeacherController extends Controller
 {
@@ -191,6 +192,8 @@ class TeacherController extends Controller
                         AND score.year = scoreinfo.year AND score.term = scoreinfo.term AND score.section = scoreinfo.section
                     WHERE score.subjectid = ? AND score.year=? AND score.term=? AND score.section = ?;', [$subjectid, $year,$term,$section]);
 
+        
+
         //dd($select);
         return view('teacher.showstudent',['data'=>$request,'data2'=>$select,'scoreinfo'=>$scoreinfo,'count'=>count($scoreinfo),'count2'=>count($select)]);
         
@@ -289,4 +292,90 @@ class TeacherController extends Controller
         }
         //$query = DB::insert('insert into score values (?,?,?,?,?)',array($subjectid,$year,$term));
     }
+
+    public function findStudent($id)
+    {
+
+        $stdid = $id;
+
+
+        $score = DB::select('SELECT `score`.`studentid`, `score`.`point`, `scoreinfo`.`info`, `scoreinfo`.`subjectid`, `scoreinfo`.`year`, `scoreinfo`.`term`, `scoreinfo`.`section`
+                                FROM `score` LEFT JOIN `scoreinfo` ON score.subjectid = scoreinfo.subjectid AND score.year = scoreinfo.year AND score.term = scoreinfo.term AND score.section = scoreinfo.section
+                                AND `score`.`scoreid` = `scoreinfo`.`scoreid` 
+                                WHERE studentid=?',array($stdid));
+
+        $subject = DB::select('SELECT DISTINCT  courseinfo.subjectid,courseinfo.year,courseinfo.term,courseinfo.section,courseinfo.thainame,courseinfo.englishname,A.studentid,
+                                (SELECT SUM(point) FROM score b WHERE b.studentid = ? AND A.subjectid = b.subjectid) sumscore
+                                FROM courseinfo LEFT JOIN score A ON A.subjectid = courseinfo.subjectid AND A.year = courseinfo.year AND A.term = courseinfo.term AND A.section = courseinfo.section
+                                WHERE A.studentid = ?',array($stdid,$stdid));
+
+
+        $stat = DB::select('SELECT DISTINCT`A`.`subjectid`, `A`.`year`, `A`.`term`, `A`.`section`, A.scoreid ,
+        (SELECT AVG(point) FROM score B WHERE B.subjectid = A.subjectid AND A.year = B.year AND A.term = B.term AND A.section = B.section AND 
+        A.scoreid = B.scoreid) mean ,(SELECT MIN(point) FROM score B WHERE B.subjectid = A.subjectid AND A.year = B.year AND A.term = B.term AND A.section = B.section AND 
+        A.scoreid = B.scoreid) min,(SELECT MAX(point) FROM score B WHERE B.subjectid = A.subjectid AND A.year = B.year AND A.term = B.term AND A.section = B.section AND 
+        A.scoreid = B.scoreid) max
+        FROM score A WHERE A.studentid=?;',array($stdid));
+        
+        
+        
+        //dd($users,$score,$subject,$mean);
+        //dd($score,$stat);
+        
+
+        //
+        
+        for($i=0;$i<count($subject);$i++){
+
+            $subjectid = $subject[$i]->subjectid;
+            $year = $subject[$i]->year;
+            $term = $subject[$i]->term;
+            $section = $subject[$i]->section;
+
+            $allscore = DB::select('SELECT DISTINCT courseinfo.subjectid,courseinfo.year,courseinfo.term,courseinfo.section,courseinfo.thainame,courseinfo.englishname,A.studentid, 
+                                    (SELECT SUM(point) FROM score b WHERE b.studentid = A.studentid AND A.subjectid = b.subjectid) sumscore 
+                                FROM courseinfo LEFT JOIN score A ON A.subjectid = courseinfo.subjectid AND A.year = courseinfo.year AND A.term = courseinfo.term 
+                                        AND A.section = courseinfo.section 
+                                WHERE A.subjectid = ? AND A.year=? AND A.term=? AND A.section = ? 
+                                ORDER BY `sumscore`',array($subjectid,$year,$term,$section));
+            //dd($allscore);
+            $first = $allscore[0]->sumscore;
+            $last = $allscore[count($allscore)-1]->sumscore;
+        
+            $label = range(intval($first),intval($last));
+            $value = array();
+            $colour = array();
+            
+
+
+            for($j=0;$j<count($label);$j++){
+                $value[$label[$j]]=0;
+                $colour[$label[$j]] = '#4AA6EA';
+            }
+            
+            foreach($allscore as $key){
+                if($key->studentid == $stdid)
+                    $colour[$key->sumscore] = '#EAC14A';
+                $value[$key->sumscore]++;
+            }
+            
+            $chart[$i] = Charts::create( 'bar', 'highcharts')
+			      ->title($subject[$i]->englishname." - ".$subject[$i]->thainame)
+                  ->elementLabel("จำนวน(คน)")
+                  ->values($value)
+                  ->colors($colour)
+                  ->dimensions(100, 50)
+                  ->labels($label)
+                  ->responsive(true);
+        }   
+
+        $student = DB::select('SELECT studentid,thainame,thailastname,email FROM users WHERE users.studentid = ?;',array($stdid));
+
+        //dd($student);
+        return view('teacher.findstudent',compact('chart'),['student'=>$student,'detail'=>$score,'data'=>$subject,'count'=>count($score),'count2'=>count($subject),'mean'=>$stat]);
+
+        //
+    }
+
+    
 }

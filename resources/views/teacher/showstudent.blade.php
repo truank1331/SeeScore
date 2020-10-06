@@ -61,8 +61,11 @@
                                     @endphp
                                 @endif
                                 <tr align="center" class='item'>
-                                    <td>{{$value->studentid}}</td>
+                                    
                                     @for($i=0;$i<$count;$i++)
+                                        @if($i==0)
+                                        <td><a href="{{ route('teacher.find',$data2[$run]->studentid) }}">{{$data2[$run]->studentid}}</a></td>
+                                        @endif
                                         <td>{{$data2[$run]->point}}</td>
                                         @php
                                             $run++;

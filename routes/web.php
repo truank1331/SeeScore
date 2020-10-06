@@ -13,6 +13,7 @@
 
     Route::prefix('teacher')->group(function () {
         Route::get('/', 'TeacherController@index')->name('teacher.home')->middleware('auth:teacher');
+        Route::get('/student/{id}', 'TeacherController@findStudent')->name('teacher.find')->middleware('auth:teacher');
         Route::get('/addclass', 'TeacherController@showAddclassForm')->name('teacher.addclass')->middleware('auth:teacher');
         Route::get('/addtoclass', 'TeacherController@addclass')->name('teacher.addtoclass')->middleware('auth:teacher');
         Route::get('/showstudent', 'TeacherController@showstudent')->name('teacher.showstudent')->middleware('auth:teacher');
