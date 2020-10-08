@@ -20,7 +20,7 @@
         Route::get('/editclass', 'TeacherController@editclass')->name('teacher.editclass')->middleware('auth:teacher');
         Route::get('/deleteclass','TeacherController@deleteclass')->name('teacher.deleteclass')->middleware('auth:teacher');
         Route::get('/addteacher','TeacherController@addteacher')->name('teacher.addteacher')->middleware('auth:teacher');
-        Route::post('/csv','TeacherController@csv')->name('teacher.csv')->middleware('auth:teacher');
+        Route::post('/changestatus','TeacherController@changestatus')->name('teacher.changestatus')->middleware('auth:teacher');
         Route::post('/store','TeacherController@store')->name('teacher.store')->middleware('auth:teacher');
         Route::post('/showscore','TeacherController@showScore')->name('teacher.showscore')->middleware('auth:teacher');
     });

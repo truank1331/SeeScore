@@ -38,7 +38,7 @@ class HomeController extends Controller
         $subject = DB::select('SELECT DISTINCT  courseinfo.subjectid,courseinfo.year,courseinfo.term,courseinfo.section,courseinfo.thainame,courseinfo.englishname,A.studentid,
                                 (SELECT SUM(point) FROM score b WHERE b.studentid = ? AND A.subjectid = b.subjectid) sumscore
                                 FROM courseinfo LEFT JOIN score A ON A.subjectid = courseinfo.subjectid AND A.year = courseinfo.year AND A.term = courseinfo.term AND A.section = courseinfo.section
-                                WHERE A.studentid = ?',array($stdid,$stdid));
+                                WHERE A.studentid = ? AND courseinfo.status = 1',array($stdid,$stdid));
 
 
         $stat = DB::select('SELECT DISTINCT`A`.`subjectid`, `A`.`year`, `A`.`term`, `A`.`section`, A.scoreid ,
@@ -55,7 +55,7 @@ class HomeController extends Controller
         
 
         //
-        
+        $chart=array();
         for($i=0;$i<count($subject);$i++){
 
             $subjectid = $subject[$i]->subjectid;
@@ -99,7 +99,7 @@ class HomeController extends Controller
                   ->labels($label)
                   ->responsive(true);
         }   
-        return view('student.home',compact('chart'),['detail'=>$score,'data'=>$subject,'count'=>count($score),'count2'=>count($subject),'mean'=>$stat]);
+        return view('student.home',['chart'=>$chart,'detail'=>$score,'data'=>$subject,'count'=>count($score),'count2'=>count($subject),'mean'=>$stat]);
 
         //
     }

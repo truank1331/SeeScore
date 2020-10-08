@@ -1,7 +1,72 @@
 @extends('layouts.nav_teacher')
 <!DOCTYPE html>
 <html>
+<head>
 
+<style>
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+</style>
+
+
+</head>
 <main class="py-4">
 
     <header class="masthead bg-primary text-white text-center">
@@ -26,6 +91,7 @@
             </div>
             <!-- Masthead Heading-->
             <h1 class="masthead-heading mb-0">Welcome Teacher</h1>
+            
             <!-- Icon Divider-->
             <div class="divider-custom divider-light">
                 <div class="divider-custom-line"></div>
@@ -57,17 +123,18 @@
             </div>
             
             <!-- Contact Section Content-->
-            <table class="table table-striped table-borderless">
+            <div class="row justify-content-center">
+            <table class="table table-center table-striped">
                 <thead>
 
                     <tr>
-                        <th scope="col">subjectid</th>
-                        <th scope="col">year</th>
-                        <th scope="col">term</th>
-                        <th scope="col">section</th>
-                        <th scope="col">thainame</th>
-                        <th scope="col">englishname</th>
-                        <th scope="col">status</th>
+                        <th scope="col">Subjectid</th>
+                        <th scope="col">Year</th>
+                        <th scope="col">Term</th>
+                        <th scope="col">Section</th>
+                        <th scope="col">Thainame</th>
+                        <th scope="col">Englishname</th>
+                        <th scope="col">Status</th>
                         <th scope="col">Upload File</th>
                         <th scope="col">Edit</th>
                         <th scope="col">Delete</th>
@@ -85,11 +152,29 @@
                         <th>{{$data->section}}</th>
                         <th>{{$data->thainame}}</th>
                         <th>{{$data->englishname}}</th>
-                        <th>{{$data->status}}</th>
+                        <th><form method='post' action='{{route("teacher.changestatus")}}'>
+                        {{ csrf_field() }}
+
+                        
+                        @if($data->status==1)
+                            <label class="switch">
+                            <input type="checkbox" checked="checked" id="status{{$key}}" value="{{$data->status}}" onclick="{this.form.submit()}"><span class="slider round"></span>
+                            </label>
+                        @else
+                            <label class="switch">
+                            <input type="checkbox" id="status{{$key}}" value="{{$data->status}}" onclick="{this.form.submit()}"><span class="slider round"></span>
+                            </label>
+                        @endif
+                         
+                                <input type="hidden" name="status" value="{{ $data->status }}">
+                                <input type="hidden" name="subjectid" value="{{ $data->subjectid }}">
+                                <input type="hidden" name="year" value="{{ $data->year }}">
+                                <input type="hidden" name="term" value="{{ $data->term }}">
+                                <input type="hidden" name="section" value="{{ $data->section }}"></form></th>
                         <th>
                             <form method='post' action='{{route("teacher.showscore")}}' enctype='multipart/form-data'>
                                 {{ csrf_field() }}
-                                <input type='file' name='file'>
+                                <input type='file' name='file' style="width:300px">
                                 <input type='submit' name='submit' value='Import' formtarget="_blank">
                                 <input type="hidden" name="subjectid" value="{{ $data->subjectid }}">
                                 <input type="hidden" name="year" value="{{ $data->year }}">
@@ -331,6 +416,8 @@
 
 
             </table>
+            
+            </div>
         </div>
     </section>
 
@@ -358,7 +445,7 @@
                     <div class="row">
                         <div class="text-left col-md-4"><label class="" for="subjectid">{{ __('SubjectID') }}</label>
                             <div class="form-group"><input type="text" name='subjectid'
-                                    class="form-control @error('subjectid') is-invalid @enderror" placeholder="517XXX"
+                                    class="form-control @error('subjectid') is-invalid @enderror" placeholder=""
                                     id="subjectid" value="{{ old('subjectid') }}" required autocomplete="subjectid"
                                     autofocus>
                                 @error('subjectid')
@@ -370,7 +457,7 @@
                         <div class="col-md-3">
                             <div class="form-group text-left"><label class="text-left"
                                     for="year">{{ __('Year') }}</label><input type="text" name='year'
-                                    class="form-control @error('year') is-invalid @enderror" placeholder="2563"
+                                    class="form-control @error('year') is-invalid @enderror" placeholder=""
                                     id="year" value="{{ old('year') }}" required autocomplete="year" autofocus>
                                 @error('year')
                                 <span class="invalid-feedback" role="alert">
@@ -382,7 +469,7 @@
                         <div class="col-md-2">
                             <div class="form-group text-left"><label class="text-left"
                                     for="term">{{ __('Term') }}</label><input type="text" name='term'
-                                    class="form-control @error('term') is-invalid @enderror" placeholder="1" id="term"
+                                    class="form-control @error('term') is-invalid @enderror" placeholder="" id="term"
                                     value="{{ old('term') }}" required autocomplete="term" autofocus>
                                 @error('term')
                                 <span class="invalid-feedback" role="alert">
@@ -393,7 +480,7 @@
                         <div class="col-md-2">
                             <div class="form-group text-left"><label class="text-left"
                                     for="section">{{ __('Section') }}</label><input type="text" name='section'
-                                    class="form-control @error('section') is-invalid @enderror" placeholder="1"
+                                    class="form-control @error('section') is-invalid @enderror" placeholder=""
                                     id="section" value="{{ old('section') }}" required autocomplete="section" autofocus>
                                 @error('section')
                                 <span class="invalid-feedback" role="alert">
@@ -408,7 +495,7 @@
                             <div class="form-group text-left">
                                 <label for="thainame">{{ __('ThaiSubjectname') }}</label><input type="text"
                                     name='thainame' class="form-control @error('thainame') is-invalid @enderror"
-                                    id="thainame" placeholder="Thainame" value="{{ old('thainame') }}" required
+                                    id="thainame" placeholder="" value="{{ old('thainame') }}" required
                                     autocomplete="thainame" autofocus>
                                 @error('thainame')
                                 <span class="invalid-feedback" role="alert">
@@ -422,7 +509,7 @@
                             <div class="form-group text-left">
                                 <label for="englishname">{{ __('EnglishSubjectname') }}</label><input type="text"
                                     name='englishname' class="form-control @error('englishname') is-invalid @enderror"
-                                    placeholder="Englishname" id="englishname" value="{{ old('englishname') }}" required
+                                    placeholder="" id="englishname" value="{{ old('englishname') }}" required
                                     autocomplete="englishname" autofocus>
                                 @error('englishname')
                                 <span class="invalid-feedback" role="alert">
@@ -437,7 +524,7 @@
                     <div class="form-group"> <small class="form-text text-muted text-right"></small> </div>
 
                     <div class="row">
-                        <div class="col-md-6"><button type="submit" class="btn btn-secondary">Submit</button></div>
+                        <div class="col-md-6"><button type="submit" class="btn btn-secondary">Submit</button>
                     </div>
                 </form>
             </div>
