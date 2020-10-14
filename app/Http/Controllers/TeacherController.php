@@ -33,8 +33,37 @@ class TeacherController extends Controller
 
         return view('teacher.home',['myclass'=>$selectmyclass,'allteacher'=>$selectallteacher]);//ส่งตัวแปรและเปลี่ยนไปยังหน้า home
     }
-    
+    public function addstudent(Request $request){//เพิ่มอาจารย์สำหรับเข้าถึงวิชานั้น
+        //dd($request);
+        $ssdid = $request["studentid"];
 
+        $subjectid = $request["subjectid"];
+        $year = $request["year"];
+        $term = $request["term"];
+        $section = $request["section"];
+        $count = $request["count"];
+
+        for($i=1;$i<=$count;$i++){
+            DB::insert('insert into score values (?,?,?,?,?,?,?)',array($subjectid,$year,$term,$section,$i,$ssdid,$request[$i]));
+        }
+
+        $thainame = $request["thainame"];
+        $englishname = $request["englishname"];
+        
+        $select = DB::select('SELECT `score`.`studentid`, CAST(`score`.`point` AS DECIMAL(16,2)) point, `scoreinfo`.`scoreid`
+                    FROM `score` LEFT JOIN `scoreinfo` ON score.scoreid = scoreinfo.scoreid AND score.subjectid = scoreinfo.subjectid 
+                        AND score.year = scoreinfo.year AND score.term = scoreinfo.term AND score.section = scoreinfo.section
+                    WHERE score.subjectid = ? AND score.year=? AND score.term=? AND score.section = ?;', [$subjectid, $year,$term,$section]);//select คะแนน
+        
+        $scoreinfo = DB::select('SELECT DISTINCT `scoreinfo`.`scoreid`,scoreinfo.info
+                     FROM `score` LEFT JOIN `scoreinfo` ON score.scoreid = scoreinfo.scoreid AND score.subjectid = scoreinfo.subjectid 
+                        AND score.year = scoreinfo.year AND score.term = scoreinfo.term AND score.section = scoreinfo.section
+                    WHERE score.subjectid = ? AND score.year=? AND score.term=? AND score.section = ?;', [$subjectid, $year,$term,$section]);//select ข้อมูลคะแนน
+        //DB::insert('insert into course (subjectid, year,term,section,teacher) values (?,?,?,?,?)', [$subjectid, $year,$term,$section,$username]);//เพิ่มอาจารย์สำหรับเข้าถึงวิชานั้น
+        
+        return view('teacher.showstudent',['data'=>$request,'data2'=>$select,'scoreinfo'=>$scoreinfo,'count'=>count($scoreinfo),'count2'=>count($select)]);
+    }
+    
     public function addteacher(Request $request){//เพิ่มอาจารย์สำหรับเข้าถึงวิชานั้น
 
         $username = $request["username"];

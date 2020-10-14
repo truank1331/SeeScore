@@ -135,14 +135,44 @@ input:checked + .slider:before {
                         <th scope="col">Thainame</th>
                         <th scope="col">Englishname</th>
                         <th scope="col">Status</th>
-                        <th scope="col">Upload File</th>
+                        <th scope="col">Use BLE</th>
+                        <th scope="col">Upload File <a data-toggle="modal" href="#howtocsvModal" style="color:blue ">(ดูตัวอย่างไฟล์กดที่นี่)</a></th>
                         <th scope="col">Edit</th>
                         <th scope="col">Delete</th>
                         <th scope="col">AddTeacher</th>
+                        <th scope="col">AddStudent</th>
                         <th scope="col">ShowStudent</th>
                     </tr>
                 </thead>
                 <tbody>
+                <div class="modal fade bd-example-modal-lg"
+                        id="howtocsvModal"
+                        tabindex="-1" role="dialog" aria-labelledby="addteacherModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="addteacherModalLabel">
+                                        ตัวอย่างรูปแบบไฟล์ CSV คะแนน *ที่ระบบรองรับ
+                                        <br>
+                                    </h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>1.ไฟล์ต้องเป็นรูปแบบ *.csv</p>
+                                    <p>2.ประกอบไปด้วย รหัสนักศึกษา และ คะแนน (เป็นอย่างน้อย)</p>
+                                    <p>3.ไฟล์ที่ export ออกมาเป็น CSV ต้องมีไม่เกิน 1 Sheet และ ไม่มี Header อื่นๆ(ตามรูปตัวอย่าง)</p>
+                                    <img src="" class="img-fluid" alt="Responsive image">
+                                    <p>4.ชื่อที่หัวคอลัมภ์จะนำไปจัดเก็บด้วยจึงไม่แนะนำให้ใส่เป็นตัวเลข (ดังรูป)</p>
+                                    <img src="" class="img-fluid" alt="Responsive image">
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     @foreach($myclass as $key => $data)
                     <tr>
 
@@ -152,6 +182,25 @@ input:checked + .slider:before {
                         <th>{{$data->section}}</th>
                         <th>{{$data->thainame}}</th>
                         <th>{{$data->englishname}}</th>
+                        <th><form method='post' action='{{route("teacher.changestatus")}}'>
+                        {{ csrf_field() }}
+
+                        
+                        @if($data->status==1)
+                            <label class="switch">
+                            <input type="checkbox" checked="checked" id="status{{$key}}" value="{{$data->status}}" onclick="{this.form.submit()}"><span class="slider round"></span>
+                            </label>
+                        @else
+                            <label class="switch">
+                            <input type="checkbox" id="status{{$key}}" value="{{$data->status}}" onclick="{this.form.submit()}"><span class="slider round"></span>
+                            </label>
+                        @endif
+                         
+                                <input type="hidden" name="status" value="{{ $data->status }}">
+                                <input type="hidden" name="subjectid" value="{{ $data->subjectid }}">
+                                <input type="hidden" name="year" value="{{ $data->year }}">
+                                <input type="hidden" name="term" value="{{ $data->term }}">
+                                <input type="hidden" name="section" value="{{ $data->section }}"></form></th>
                         <th><form method='post' action='{{route("teacher.changestatus")}}'>
                         {{ csrf_field() }}
 
@@ -193,6 +242,16 @@ input:checked + .slider:before {
                         <th><button type="button" class="btn btn-info " data-toggle="modal"
                                 data-target="#addteacherModal{{$data->subjectid}}-{{ $data->year }}-{{ $data->term }}-{{ $data->section }}"
                                 data-modal-id="{{$data->subjectid}}" >Add Teacher</button></th>
+                        <th><form method='get' action='{{route("teacher.showstudent")}}'>
+                                <input type='submit' class="btn btn-success " name='submit' value='Addstudent' formtarget="_blank">
+                                <input type="hidden" name="subjectid" value="{{ $data->subjectid }}">
+                                <input type="hidden" name="year" value="{{ $data->year }}">
+                                <input type="hidden" name="term" value="{{ $data->term }}">
+                                <input type="hidden" name="section" value="{{ $data->section }}">
+                                <input type="hidden" name="thainame" value="{{ $data->thainame }}">
+                                <input type="hidden" name="englishname" value="{{ $data->englishname }}">
+                            </form></th>
+
                         <th><form method='get' action='{{route("teacher.showstudent")}}'>
                                 <input type='submit' class="btn btn-warning " name='submit' value='Showstudent' formtarget="_blank">
                                 <input type="hidden" name="subjectid" value="{{ $data->subjectid }}">
@@ -329,7 +388,6 @@ input:checked + .slider:before {
                     </div>
 
 
-
                     <div class="modal fade"
                         id="addteacherModal{{$data->subjectid}}-{{ $data->year }}-{{ $data->term }}-{{ $data->section }}"
                         tabindex="-1" role="dialog" aria-labelledby="addteacherModalLabel" aria-hidden="true">
@@ -383,6 +441,9 @@ input:checked + .slider:before {
                             </div>
                         </div>
                     </div>
+
+
+                    
 
 
 
