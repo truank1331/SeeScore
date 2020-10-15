@@ -72,7 +72,8 @@ return [
     'db_fields' => [
         '----Select----',
         'StudentID Colums',
-        'Score Colums'
+        'Score Colums',
+        'Grade Colums'
         
     ],
 

@@ -19,7 +19,7 @@ class TeacherController extends Controller
         $username = Auth::user()->username;
 
         $selectmyclass =  DB::select('SELECT `course`.`subjectid`, `course`.`year`, `course`.`term`, `course`.`section`, 
-                                        `courseinfo`.`thainame`, `courseinfo`.`englishname`, `courseinfo`.`status` 
+                                        `courseinfo`.`thainame`, `courseinfo`.`englishname`, `courseinfo`.`status` , `courseinfo`.`ble` 
                                 FROM `course` LEFT JOIN `courseinfo` ON `course`.`subjectid` = `courseinfo`.`subjectid` 
                                 AND `course`.`subjectid` = `courseinfo`.`subjectid` 
                                 AND `course`.`year` = `courseinfo`.`year` 
@@ -152,7 +152,7 @@ class TeacherController extends Controller
         }
     }
     public function store(Request $request){ //รับค่าจากหลังจาก ShowScore ส่งมา
-        
+        //dd($request);
         $data = $request->input();//ชี้ไปยังค่าที่รับมาจากหน้าตาราง ShowScore
         $subjectid = $data["subjectid"];
         $year = $data["year"];
@@ -164,6 +164,7 @@ class TeacherController extends Controller
         if(count($check)>0){
             DB::delete('DELETE from scoreinfo where subjectid = ? and year = ? and term = ? and section = ?', [$subjectid, $year,$term,$section]);
             DB::delete('DELETE from score where subjectid = ? and year = ? and term = ? and section = ?', [$subjectid, $year,$term,$section]);
+            DB::delete('DELETE from grade where subjectid = ? and year = ? and term = ? and section = ?', [$subjectid, $year,$term,$section]);
         }
         Self::insertSubject($data);
         
@@ -189,8 +190,14 @@ class TeacherController extends Controller
                      FROM `score` LEFT JOIN `scoreinfo` ON score.scoreid = scoreinfo.scoreid AND score.subjectid = scoreinfo.subjectid 
                         AND score.year = scoreinfo.year AND score.term = scoreinfo.term AND score.section = scoreinfo.section
                     WHERE score.subjectid = ? AND score.year=? AND score.term=? AND score.section = ?;', [$subjectid, $year,$term,$section]);//select ข้อมูลคะแนน
+        
+        $ble =  DB::select('SELECT `courseinfo`.`ble` 
+                                FROM `courseinfo` 
+                                WHERE  courseinfo.subjectid = ? 
+                                AND courseinfo.year=? AND courseinfo.term=? AND courseinfo.section = ?', [$subjectid, $year,$term,$section]);
+        //dd($ble[0]->ble);
 
-        return view('teacher.showstudent',['data'=>$request,'data2'=>$select,'scoreinfo'=>$scoreinfo,'count'=>count($scoreinfo),'count2'=>count($select)]);
+        return view('teacher.showstudent',['ble'=>$ble,'data'=>$request,'data2'=>$select,'scoreinfo'=>$scoreinfo,'count'=>count($scoreinfo),'count2'=>count($select)]);
     }
 
     public function deleteclass(Request $request){ //ลบรายวิชา
@@ -237,6 +244,14 @@ class TeacherController extends Controller
             else if($data['fields'][substr($i,-1)]=="2"){ //กรณีที่ เป็น Score ($i ตัวสุดท้ายเป็น _2)
                 if($check){//ต้องไม่ชื่อเดียวกับคอลัมภ์ ไว้ดักว่าเป็นหัวหรือไม่
                     DB::insert('insert into score values (?,?,?,?,?,?,?)',array($subjectid,$year,$term,$section,$run,$ssdid,$key));
+                    $run++;
+                }
+                $count++;
+            }
+
+            else if($data['fields'][substr($i,-1)]=="3"){ //กรณีที่ เป็น Grade ($i ตัวสุดท้ายเป็น _2)
+                if($check){//ต้องไม่ชื่อเดียวกับคอลัมภ์ ไว้ดักว่าเป็นหัวหรือไม่
+                    DB::insert('insert into grade values (?,?,?,?,?,?)',array($subjectid,$year,$term,$section,$ssdid,$key));
                     $run++;
                 }
                 $count++;
@@ -356,6 +371,24 @@ class TeacherController extends Controller
             $status=1;
         }
         DB::update('UPDATE courseinfo set courseinfo.status = ? where subjectid = ? and year = ? and term = ? and section = ?;',[$status,$subjectid, $year,$term,$section]);
+
+        return redirect(route('teacher.home','#myclass'));
+    }
+
+    public function changeble(Request $request){//เปลี่ยนสถานะรายวิชา
+        $subjectid = $request["subjectid"];
+        $year = $request["year"];
+        $term = $request["term"];
+        $section = $request["section"];
+        $ble = $request["ble"];
+        //dd($request);
+        if($ble==1){
+            $ble=0;
+        }
+        else{
+            $ble=1;
+        }
+        DB::update('UPDATE courseinfo set courseinfo.ble = ? where subjectid = ? and year = ? and term = ? and section = ?;',[$ble,$subjectid, $year,$term,$section]);
 
         return redirect(route('teacher.home','#myclass'));
     }

@@ -201,26 +201,30 @@ input:checked + .slider:before {
                                 <input type="hidden" name="year" value="{{ $data->year }}">
                                 <input type="hidden" name="term" value="{{ $data->term }}">
                                 <input type="hidden" name="section" value="{{ $data->section }}"></form></th>
-                        <th><form method='post' action='{{route("teacher.changestatus")}}'>
+
+
+                        <th><form method='post' action='{{route("teacher.changeble")}}'>
                         {{ csrf_field() }}
 
                         
-                        @if($data->status==1)
+                        @if($data->ble==1)
                             <label class="switch">
-                            <input type="checkbox" checked="checked" id="status{{$key}}" value="{{$data->status}}" onclick="{this.form.submit()}"><span class="slider round"></span>
+                            <input type="checkbox" checked="checked" id="ble{{$key}}" value="{{$data->ble}}" onclick="{this.form.submit()}"><span class="slider round"></span>
                             </label>
                         @else
                             <label class="switch">
-                            <input type="checkbox" id="status{{$key}}" value="{{$data->status}}" onclick="{this.form.submit()}"><span class="slider round"></span>
+                            <input type="checkbox" id="ble{{$key}}" value="{{$data->ble}}" onclick="{this.form.submit()}"><span class="slider round"></span>
                             </label>
                         @endif
                          
-                                <input type="hidden" name="status" value="{{ $data->status }}">
+                                <input type="hidden" name="ble" value="{{ $data->ble }}">
                                 <input type="hidden" name="subjectid" value="{{ $data->subjectid }}">
                                 <input type="hidden" name="year" value="{{ $data->year }}">
                                 <input type="hidden" name="term" value="{{ $data->term }}">
                                 <input type="hidden" name="section" value="{{ $data->section }}"></form></th>
                         <th>
+
+                        
                             <form method='post' action='{{route("teacher.showscore")}}' enctype='multipart/form-data'>
                                 {{ csrf_field() }}
                                 <input type='file' name='file' style="width:300px">

@@ -69,6 +69,11 @@
                                         style="cursor:pointer">{{$scoreinfo[$i]->info}} <i class="fa fa-sort"></i></th>
 
                                         @endfor
+                                    @if($ble[0]->ble==1)
+                                        <th class="th-sm" scope="col"
+                                        onclick="w3.sortHTML('#myTable', '.item', 'td:nth-child(1)')"
+                                        style="cursor:pointer"><font color="red">คะแนนเช็คชื่อ(BLE)</font> <i class="fa fa-sort"></i></th>
+                                    @endif
                                 </tr>
                             </thead>
                             <tbody>
@@ -92,7 +97,11 @@
                                         $run++;
                                         @endphp
                                         @endfor
+                                    @if($ble[0]->ble==1)
+                                        <td>0</td>
+                                    @endif
                                 </tr>
+                                
                                 @endforeach
 
 
