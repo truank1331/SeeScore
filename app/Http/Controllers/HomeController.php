@@ -57,13 +57,14 @@ class HomeController extends Controller
         //
         $chart=array();
         $donut=array();
+        $grade=array();
         for($i=0;$i<count($subject);$i++){
 
             $subjectid = $subject[$i]->subjectid;
             $year = $subject[$i]->year;
             $term = $subject[$i]->term;
             $section = $subject[$i]->section;
-
+            
             $allscore = DB::select('SELECT DISTINCT courseinfo.subjectid,courseinfo.year,courseinfo.term,courseinfo.section,courseinfo.thainame,courseinfo.englishname,A.studentid, 
                                     (SELECT SUM(point) FROM score b WHERE b.studentid = A.studentid AND A.subjectid = b.subjectid) sumscore 
                                 FROM courseinfo LEFT JOIN score A ON A.subjectid = courseinfo.subjectid AND A.year = courseinfo.year AND A.term = courseinfo.term 
@@ -107,6 +108,15 @@ class HomeController extends Controller
                                 FROM `score` LEFT JOIN `scoreinfo` ON score.subjectid = scoreinfo.subjectid AND score.year = scoreinfo.year AND score.term = scoreinfo.term AND score.section = scoreinfo.section
                                 AND `score`.`scoreid` = `scoreinfo`.`scoreid` 
                                 WHERE studentid=? AND score.subjectid = ? AND score.year=? AND score.term=? AND score.section = ?',array($stdid,$subjectid,$year,$term,$section));
+            $querygrade = DB::select('SELECT `grade`.`grade`, `grade`.`studentid`, `grade`.`subjectid`, `grade`.`year`, `grade`.`term`, `grade`.`section`
+                                FROM `grade` 
+                                WHERE studentid=? AND grade.subjectid = ? AND grade.year=? AND grade.term=? AND grade.section = ?',array($stdid,$subjectid,$year,$term,$section));
+
+            if($querygrade)
+                $grade[$i]=$querygrade[0]->grade;
+            else
+                $grade[$i]="";
+
             $labelcoo=array();
             $valuecoo=array();
             for($j=0;$j<count($coo);$j++){
@@ -120,15 +130,15 @@ class HomeController extends Controller
                         ->values($valuecoo)
                         ->dimensions(500,500)
                         ->responsive(true);
+                        
         }  
-         
 
        //dd($chart);
         
         
             
 
-        return view('student.home',['donut'=>$donut,'chart'=>$chart,'detail'=>$score,'data'=>$subject,'count'=>count($score),'count2'=>count($subject),'mean'=>$stat]);
+        return view('student.home',['grade'=>$grade,'donut'=>$donut,'chart'=>$chart,'detail'=>$score,'data'=>$subject,'count'=>count($score),'count2'=>count($subject),'mean'=>$stat]);
 
         //
     }

@@ -59,12 +59,24 @@
                                     {{$data[$i]->term}} - {{$data[$i]->section}} - {{$data[$i]->thainame}} [
                                     {{$data[$i]->englishname}}]</div>
                                 <div class="card-body">
-                                    Now Your Score is {{$data[$i]->sumscore}}<br>
+                                    Now Your Score is {{$data[$i]->sumscore}} 
+                                    @if($grade[$i])
+                                    <button type="button" class="btn btn-success float-right" data-toggle="modal"
+                                        data-target="#gradeModal{{$data[$i]->subjectid}}-{{ $data[$i]->year }}-{{ $data[$i]->term }}-{{ $data[$i]->section }}"
+                                        data-modal-id="{{$data[$i]->subjectid}}">Grade!!</button>
 
+                                    @endif
+                                    
+
+
+                                    
+
+                                    
 
                                     <button type="button" class="btn btn-primary float-right" data-toggle="modal"
                                         data-target="#exampleModal{{$data[$i]->subjectid}}-{{ $data[$i]->year }}-{{ $data[$i]->term }}-{{ $data[$i]->section }}"
                                         data-modal-id="{{$data[$i]->subjectid}}">รายละเอียด</button>
+                                    
                                         {!! $chart[$i]->html() !!}
                                         {!! $chart[$i]->script() !!}
                                 </div>
@@ -84,27 +96,26 @@
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
+                            
                         </div>
+                        <h3>Your Grade is {{$grade[$i]}}</h3>
                         <div class="modal-body">
                         
                             <div class="container">
                             <div class="row justify-content-center">
+                            
                             <!-- <div style="height:100%"> -->
                             
                                         
                             {!! $donut[$i]->html() !!}
                             {!! $donut[$i]->script() !!}
                             <table class="table table-center table-striped">
-                            @for($j=$check;$j<$count;$j++) 
-                            
-                                @if($data[$i]->subjectid==$detail[$j]->subjectid)
-
-
-                                    
-                                    <thead>
+                            <thead>
                                     <tr>
                                     <th>
-                                        {{$detail[$j]->info}}
+                                    </th>
+                                    <th>
+                                        Your Score
                                     </th>
                                     <th>
                                         MEAN
@@ -117,8 +128,18 @@
                                     </th>
                                     </tr>
                                     </thead>
+                            @for($j=$check;$j<$count;$j++) 
+                            
+                                @if($data[$i]->subjectid==$detail[$j]->subjectid)
+
+
+                                    
+                                    
 
                                     <tr>
+                                    <th>
+                                        {{$detail[$j]->info}}
+                                    </th>
                                     <td>{{$detail[$j]->point}}
                                     </td>
                                     <td>{{$mean[$j]->mean}}
@@ -135,6 +156,42 @@
                                 @endif
                             @endfor
                             </table>
+                            <!-- </div> -->
+                            </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade"
+                id="gradeModal{{$data[$i]->subjectid}}-{{ $data[$i]->year }}-{{ $data[$i]->term }}-{{ $data[$i]->section }}"
+                tabindex="-1" role="dialog" aria-labelledby="gradeModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-sm" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="gradeModalLabel">
+                                {{$data[$i]->subjectid}}-{{ $data[$i]->year }}-{{ $data[$i]->term }}-{{ $data[$i]->section }} - {{$data[$i]->thainame}}
+                            </h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            
+                        </div>
+                        
+                        <div class="modal-body">
+                        
+                            <div class="container">
+                            <div class="row justify-content-center">
+                            <h3>Your Grade is {{$grade[$i]}}!!</h3>
+                            <!-- <div style="height:100%"> -->
+                            
+                                        
+                            
                             <!-- </div> -->
                             </div>
                             </div>
