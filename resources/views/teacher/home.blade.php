@@ -135,7 +135,7 @@ input:checked + .slider:before {
                         <th scope="col">Thainame</th>
                         <th scope="col">Englishname</th>
                         <th scope="col">Status</th>
-                        <th scope="col">Use BLE</th>
+                        <!-- <th scope="col">Use BLE</th> -->
                         <th scope="col">Upload File <a data-toggle="modal" href="#howtocsvModal" style="color:blue ">(ดูตัวอย่างไฟล์กดที่นี่)</a></th>
                         <th scope="col">Edit</th>
                         <th scope="col">Delete</th>
@@ -203,7 +203,7 @@ input:checked + .slider:before {
                                 <input type="hidden" name="section" value="{{ $data->section }}"></form></th>
 
 
-                        <th><form method='post' action='{{route("teacher.changeble")}}'>
+                        <!-- <th><form method='post' action='{{route("teacher.changeble")}}'>
                         {{ csrf_field() }}
 
                         
@@ -221,8 +221,8 @@ input:checked + .slider:before {
                                 <input type="hidden" name="subjectid" value="{{ $data->subjectid }}">
                                 <input type="hidden" name="year" value="{{ $data->year }}">
                                 <input type="hidden" name="term" value="{{ $data->term }}">
-                                <input type="hidden" name="section" value="{{ $data->section }}"></form></th>
-                        <th>
+                                <input type="hidden" name="section" value="{{ $data->section }}"></form></th>-->
+                        <th> 
 
                         
                             <form method='post' action='{{route("teacher.showscore")}}' enctype='multipart/form-data'>

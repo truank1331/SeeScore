@@ -26,7 +26,7 @@
         </div>
     </header>
     
-
+    {!! Charts::scripts() !!}
     <section class="page-section portfolio" id="class">
         <div class="container">
             <!-- Portfolio Section Heading-->
@@ -66,7 +66,6 @@
                                         data-target="#exampleModal{{$data[$i]->subjectid}}-{{ $data[$i]->year }}-{{ $data[$i]->term }}-{{ $data[$i]->section }}"
                                         data-modal-id="{{$data[$i]->subjectid}}">รายละเอียด</button>
                                         {!! $chart[$i]->html() !!}
-                                        {!! Charts::scripts() !!}
                                         {!! $chart[$i]->script() !!}
                                 </div>
                             </div><br>
@@ -76,7 +75,7 @@
             <div class="modal fade"
                 id="exampleModal{{$data[$i]->subjectid}}-{{ $data[$i]->year }}-{{ $data[$i]->term }}-{{ $data[$i]->section }}"
                 tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
+                <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="exampleModalLabel">
@@ -87,15 +86,58 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            @for($j=$check;$j<$count;$j++) 
-                                @if($data[$i]->subjectid==$detail[$j]->subjectid)
-                                    {{$detail[$j]->info}} --- {{$detail[$j]->point}}--(ค่า MEAN = {{$mean[$j]->mean}}, MIN ={{$mean[$j]->min}} , MAX = {{$mean[$j]->max}})  <br>
+                        
+                            <div class="container">
+                            <div class="row justify-content-center">
+                            <!-- <div style="height:100%"> -->
+                            
                                         
+                            {!! $donut[$i]->html() !!}
+                            {!! $donut[$i]->script() !!}
+                            <table class="table table-center table-striped">
+                            @for($j=$check;$j<$count;$j++) 
+                            
+                                @if($data[$i]->subjectid==$detail[$j]->subjectid)
+
+
+                                    
+                                    <thead>
+                                    <tr>
+                                    <th>
+                                        {{$detail[$j]->info}}
+                                    </th>
+                                    <th>
+                                        MEAN
+                                    </th>
+                                    <th>
+                                        MIN
+                                    </th>
+                                    <th>
+                                        MAX
+                                    </th>
+                                    </tr>
+                                    </thead>
+
+                                    <tr>
+                                    <td>{{$detail[$j]->point}}
+                                    </td>
+                                    <td>{{$mean[$j]->mean}}
+                                    </td>
+                                    <td>{{$mean[$j]->min}}
+                                    </td>
+                                    <td>{{$mean[$j]->max}}
+                                    </td>
+                                    </tr>
+                                    
                                     @php
                                         $check = $j
                                     @endphp    
                                 @endif
                             @endfor
+                            </table>
+                            <!-- </div> -->
+                            </div>
+                            </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

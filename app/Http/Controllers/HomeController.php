@@ -56,6 +56,7 @@ class HomeController extends Controller
 
         //
         $chart=array();
+        $donut=array();
         for($i=0;$i<count($subject);$i++){
 
             $subjectid = $subject[$i]->subjectid;
@@ -90,16 +91,44 @@ class HomeController extends Controller
                 $value[$key->sumscore]++;
             }
             
+                // for($i=0;$i<count($score);$i++){
+                    
+                // }
             $chart[$i] = Charts::create( 'bar', 'highcharts')
 			      ->title($subject[$i]->englishname." - ".$subject[$i]->thainame)
                   ->elementLabel("จำนวน(คน)")
                   ->values($value)
                   ->colors($colour)
-                  ->dimensions(100, 50)
+                  ->dimensions(1000,500)
                   ->labels($label)
                   ->responsive(true);
-        }   
-        return view('student.home',['chart'=>$chart,'detail'=>$score,'data'=>$subject,'count'=>count($score),'count2'=>count($subject),'mean'=>$stat]);
+            
+            $coo = DB::select('SELECT `score`.`studentid`, `score`.`point`, `scoreinfo`.`info`, `scoreinfo`.`subjectid`, `scoreinfo`.`year`, `scoreinfo`.`term`, `scoreinfo`.`section`
+                                FROM `score` LEFT JOIN `scoreinfo` ON score.subjectid = scoreinfo.subjectid AND score.year = scoreinfo.year AND score.term = scoreinfo.term AND score.section = scoreinfo.section
+                                AND `score`.`scoreid` = `scoreinfo`.`scoreid` 
+                                WHERE studentid=? AND score.subjectid = ? AND score.year=? AND score.term=? AND score.section = ?',array($stdid,$subjectid,$year,$term,$section));
+            $labelcoo=array();
+            $valuecoo=array();
+            for($j=0;$j<count($coo);$j++){
+                $labelcoo[$j]=$coo[$j]->info;
+                $valuecoo[$j]=$coo[$j]->point;
+            }
+            //dd($coo);
+            $donut[$i] = Charts::create('donut', 'highcharts')
+                        ->title($subject[$i]->englishname." - ".$subject[$i]->thainame)
+                        ->labels($labelcoo)
+                        ->values($valuecoo)
+                        ->dimensions(500,500)
+                        ->responsive(true);
+        }  
+         
+
+       //dd($chart);
+        
+        
+            
+
+        return view('student.home',['donut'=>$donut,'chart'=>$chart,'detail'=>$score,'data'=>$subject,'count'=>count($score),'count2'=>count($subject),'mean'=>$stat]);
 
         //
     }

@@ -60,8 +60,14 @@ class TeacherController extends Controller
                         AND score.year = scoreinfo.year AND score.term = scoreinfo.term AND score.section = scoreinfo.section
                     WHERE score.subjectid = ? AND score.year=? AND score.term=? AND score.section = ?;', [$subjectid, $year,$term,$section]);//select ข้อมูลคะแนน
         //DB::insert('insert into course (subjectid, year,term,section,teacher) values (?,?,?,?,?)', [$subjectid, $year,$term,$section,$username]);//เพิ่มอาจารย์สำหรับเข้าถึงวิชานั้น
+        $ble =  DB::select('SELECT `courseinfo`.`ble` 
+                                FROM `courseinfo` 
+                                WHERE  courseinfo.subjectid = ? 
+                                AND courseinfo.year=? AND courseinfo.term=? AND courseinfo.section = ?', [$subjectid, $year,$term,$section]);
+                                
+        return view('teacher.showstudent',['ble'=>$ble,'data'=>$request,'data2'=>$select,'scoreinfo'=>$scoreinfo,'count'=>count($scoreinfo),'count2'=>count($select)]);
         
-        return view('teacher.showstudent',['data'=>$request,'data2'=>$select,'scoreinfo'=>$scoreinfo,'count'=>count($scoreinfo),'count2'=>count($select)]);
+        //dd($ble[0]->ble);
     }
     
     public function addteacher(Request $request){//เพิ่มอาจารย์สำหรับเข้าถึงวิชานั้น
