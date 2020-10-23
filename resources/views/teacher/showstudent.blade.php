@@ -74,11 +74,18 @@
                                         onclick="w3.sortHTML('#myTable', '.item', 'td:nth-child(1)')"
                                         style="cursor:pointer"><font color="red">คะแนนเช็คชื่อ(BLE)</font> <i class="fa fa-sort"></i></th>
                                     @endif
+                                    @if(count($grade)>0)
+                                        <th class="th-sm" scope="col"
+                                        onclick="w3.sortHTML('#myTable', '.item', 'td:nth-child(1)')"
+                                        style="cursor:pointer"><font color="green">เกรด</font> <i class="fa fa-sort"></i></th>
+                                    @endif
                                 </tr>
                             </thead>
                             <tbody>
                                 @php
                                 $run = 0;
+                                $gg = 0;
+                                $brun = 0;
                                 @endphp
                                 @foreach($data2 as $value)
                                 @if($count2==$run)
@@ -98,7 +105,20 @@
                                         @endphp
                                         @endfor
                                     @if($ble[0]->ble==1)
+                                        @if(count($ble2)-1>=$brun && $data2[$run-1]->studentid == $ble2[$brun]->studentid)
+                                        <td>{{$ble2[$brun]->point}}</td>
+                                        @php
+                                            $brun+=1;
+                                        @endphp
+                                        @else
                                         <td>0</td>
+                                        @endif
+                                    @endif
+                                    @if(count($grade)>0)
+                                        <td>{{ $grade[$gg]->grade}}</td>
+                                        @php
+                                            $gg++;
+                                        @endphp
                                     @endif
                                 </tr>
                                 
@@ -173,6 +193,20 @@
 
 
                                                                         @endfor
+
+                                                                        @if(count($grade)>0)
+                                                                        <div class="form-group text-left">
+                                                                            <label
+                                                                                for="grade">เกรด</label><input
+                                                                                type="text" name="grade"
+                                                                                class="form-control"
+                                                                                id="grade" placeholder=""
+                                                                                value=""
+                                                                                required
+                                                                                autocomplete=""
+                                                                                autofocus>
+
+                                                                        @endif
                                                                 </div>
 
                                                             </div>

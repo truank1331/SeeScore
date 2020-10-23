@@ -98,7 +98,7 @@
                             </button>
                             
                         </div>
-                        <h3>Your Grade is {{$grade[$i]}}</h3>
+
                         <div class="modal-body">
                         
                             <div class="container">
@@ -155,6 +155,15 @@
                                     @endphp    
                                 @endif
                             @endfor
+                            @if($donut[$i]->labels[count($donut[$i]->labels)-1]=="เช็คชื่อ")
+                                    <tr>
+                                    <th>
+                                        เช็คชื่อ
+                                    </th>
+                                    <td>{{$donut[$i]->values[count($donut[$i]->values)-1]}}
+
+                                    </tr>
+                            @endif
                             </table>
                             <!-- </div> -->
                             </div>

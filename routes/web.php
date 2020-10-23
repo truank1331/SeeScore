@@ -1,5 +1,7 @@
 <?php
     Route::view('/', 'welcome')->name('welcome');
+
+    Route::get('/api/insertble/','ApiController@insertble');
     Auth::routes(['verify' => true]);
 
     Route::get('/home', 'HomeController@index')->name('student.home')->middleware('auth');

@@ -123,17 +123,32 @@ class HomeController extends Controller
                 $labelcoo[$j]=$coo[$j]->info;
                 $valuecoo[$j]=$coo[$j]->point;
             }
+
+            $ble =  DB::select('SELECT `courseinfo`.`ble` 
+                                FROM `courseinfo` 
+                                WHERE  courseinfo.subjectid = ? 
+                                AND courseinfo.year=? AND courseinfo.term=? AND courseinfo.section = ?', [$subjectid, $year,$term,$section]);
+            $ble2 =  DB::select('SELECT `ble`.`studentid` ,`ble`.`point`
+                                FROM `BLE` 
+                                WHERE  BLE.subjectid = ? 
+                                AND BLE.year=? AND BLE.term=? AND BLE.section = ? AND BLE.studentid = ?', [$subjectid, $year,$term,$section,$stdid]);
+            if($ble[0]->ble==1){
+                $labelcoo[count($coo)]='เช็คชื่อ';
+                $valuecoo[count($coo)]= $ble2[0]->point;
+            }
             //dd($coo);
             $donut[$i] = Charts::create('donut', 'highcharts')
                         ->title($subject[$i]->englishname." - ".$subject[$i]->thainame)
                         ->labels($labelcoo)
                         ->values($valuecoo)
-                        ->dimensions(500,500)
-                        ->responsive(true);
-                        
+                        ->dimensions(800,500)
+                        ->responsive(false);
+            
+            
         }  
+        
 
-       //dd($chart);
+       //dd($donut[0]);
         
         
             

@@ -33,7 +33,7 @@ class TeacherController extends Controller
 
         return view('teacher.home',['myclass'=>$selectmyclass,'allteacher'=>$selectallteacher]);//ส่งตัวแปรและเปลี่ยนไปยังหน้า home
     }
-    public function addstudent(Request $request){//เพิ่มอาจารย์สำหรับเข้าถึงวิชานั้น
+    public function addstudent(Request $request){//เพิ่มนักศึกษารายคน
         //dd($request);
         $ssdid = $request["studentid"];
 
@@ -46,6 +46,7 @@ class TeacherController extends Controller
         for($i=1;$i<=$count;$i++){
             DB::insert('insert into score values (?,?,?,?,?,?,?)',array($subjectid,$year,$term,$section,$i,$ssdid,$request[$i]));
         }
+        DB::insert('insert into grade values (?,?,?,?,?,?)',array($subjectid,$year,$term,$section,$ssdid,$request["grade"]));
 
         $thainame = $request["thainame"];
         $englishname = $request["englishname"];
@@ -64,8 +65,13 @@ class TeacherController extends Controller
                                 FROM `courseinfo` 
                                 WHERE  courseinfo.subjectid = ? 
                                 AND courseinfo.year=? AND courseinfo.term=? AND courseinfo.section = ?', [$subjectid, $year,$term,$section]);
+        
+        $grade =  DB::select('SELECT `grade`.`grade` 
+                                FROM `grade` 
+                                WHERE  grade.subjectid = ? 
+                                AND grade.year=? AND grade.term=? AND grade.section = ?', [$subjectid, $year,$term,$section]);      
                                 
-        return view('teacher.showstudent',['ble'=>$ble,'data'=>$request,'data2'=>$select,'scoreinfo'=>$scoreinfo,'count'=>count($scoreinfo),'count2'=>count($select)]);
+        return view('teacher.showstudent',['grade'=>$grade,'ble'=>$ble,'data'=>$request,'data2'=>$select,'scoreinfo'=>$scoreinfo,'count'=>count($scoreinfo),'count2'=>count($select)]);
         
         //dd($ble[0]->ble);
     }
@@ -201,9 +207,25 @@ class TeacherController extends Controller
                                 FROM `courseinfo` 
                                 WHERE  courseinfo.subjectid = ? 
                                 AND courseinfo.year=? AND courseinfo.term=? AND courseinfo.section = ?', [$subjectid, $year,$term,$section]);
-        //dd($ble[0]->ble);
+        
 
-        return view('teacher.showstudent',['ble'=>$ble,'data'=>$request,'data2'=>$select,'scoreinfo'=>$scoreinfo,'count'=>count($scoreinfo),'count2'=>count($select)]);
+            $ble2 =  DB::select('SELECT `ble`.`studentid` ,`ble`.`point`
+                                FROM `BLE` 
+                                WHERE  BLE.subjectid = ? 
+                                AND BLE.year=? AND BLE.term=? AND BLE.section = ?', [$subjectid, $year,$term,$section]);
+
+
+        $grade =  DB::select('SELECT `grade`.`grade` 
+                                FROM `grade` 
+                                WHERE  grade.subjectid = ? 
+                                AND grade.year=? AND grade.term=? AND grade.section = ?', [$subjectid, $year,$term,$section]);     
+                                
+
+
+                                
+
+        //dd($grade);
+        return view('teacher.showstudent',['grade'=>$grade,'ble'=>$ble,'ble2'=>$ble2,'data'=>$request,'data2'=>$select,'scoreinfo'=>$scoreinfo,'count'=>count($scoreinfo),'count2'=>count($select)]);
     }
 
     public function deleteclass(Request $request){ //ลบรายวิชา
@@ -388,11 +410,12 @@ class TeacherController extends Controller
         $section = $request["section"];
         $ble = $request["ble"];
         //dd($request);
-        if($ble==1){
+        if($ble==1){//เปลี่ยนสถานะ BLE เป็นปิด
             $ble=0;
         }
         else{
             $ble=1;
+            
         }
         DB::update('UPDATE courseinfo set courseinfo.ble = ? where subjectid = ? and year = ? and term = ? and section = ?;',[$ble,$subjectid, $year,$term,$section]);
 
