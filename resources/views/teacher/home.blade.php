@@ -163,9 +163,10 @@ input:checked + .slider:before {
                                     <p>1.ไฟล์ต้องเป็นรูปแบบ *.csv</p>
                                     <p>2.ประกอบไปด้วย รหัสนักศึกษา และ คะแนน (เป็นอย่างน้อย)</p>
                                     <p>3.ไฟล์ที่ export ออกมาเป็น CSV ต้องมีไม่เกิน 1 Sheet และ ไม่มี Header อื่นๆ(ตามรูปตัวอย่าง)</p>
-                                    <img src="" class="img-fluid" alt="Responsive image">
                                     <p>4.ชื่อที่หัวคอลัมภ์จะนำไปจัดเก็บด้วยจึงไม่แนะนำให้ใส่เป็นตัวเลข (ดังรูป)</p>
-                                    <img src="" class="img-fluid" alt="Responsive image">
+                                    <img src="assets/img/Screenshot_3.png" class="img-fluid" alt="Responsive image">
+                                    <p>5.ผลลัพธ์ของไฟล์ CSV ที่ต้องการ ** จำเป็น ** ต้องได้คะแนนและรหัสนักศึกษาที่ถูกต้อง (ส่วนอื่นๆ เช่น ชื่อ ไม่จำเป็นต้องสมบูรณ์ก็ได้)</p>
+                                    <img src="assets/img/Screenshot_4.png" class="img-fluid" alt="Responsive image">
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
